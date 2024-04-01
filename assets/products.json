@@ -1,0 +1,20 @@
+[ {
+    "id": 1,
+    "title": "super2000",
+    "description": "zapatillas de cuero",
+    "price": 40000,
+    "thumbnail": "../img/zapa1.jpg",
+    "code": "ab123",
+    "status": true,
+    "stock": 20
+  },
+  {
+    "id": 2,
+    "title": "turbo",
+    "description": "cuero y lona",
+    "price": 13500,
+    "thumbnail": "../img/zapa2.jpg",
+    "code": "ab124",
+    "status": true,
+    "stock": 10
+  }]
