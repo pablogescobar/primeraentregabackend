@@ -1,29 +1,29 @@
 const mongoose = require('mongoose');
 
-// Define la estructura del esquema para el carrito
+
 const cartSchema = new mongoose.Schema({
-    // Aquí defines los campos y su tipo de datos para el carrito
-    // Por ejemplo:
+    //  campos y  tipo de datos para el carrito
+    
     userId: {
-        type: mongoose.Schema.Types.ObjectId, // Si estás utilizando usuarios, podría ser un ObjectId
+        type: mongoose.Schema.Types.ObjectId, // s utilizando usuarios, puede ser un ObjectId
         required: true
     },
     products: [
         {
             productId: {
-                type: mongoose.Schema.Types.ObjectId, // El ID del producto en el carrito
+                type: mongoose.Schema.Types.ObjectId, //  ID del producto en el carrito
                 required: true
             },
             quantity: {
-                type: Number, // La cantidad de ese producto en el carrito
+                type: Number, //  cantidad de  producto en el carro
                 required: true,
-                default: 1 // Puedes establecer un valor predeterminado si lo deseas
+                default: 1 //  valor predeterminado si lo deseas
             }
         }
     ],
     createdAt: {
         type: Date,
-        default: Date.now // Puedes establecer la fecha de creación del carrito automáticamente
+        default: Date.now //  fecha de creación del carrito automáticamente
     }
 });
 
