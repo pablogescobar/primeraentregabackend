@@ -1,47 +1,68 @@
-const CartManager = require('../CartManager');
-const { Router } = require('express');
-const router = Router();
+const express = require('express');
+const router = express.Router();
+const Cart = require('../models/cartModel');
 
-const manager = new CartManager(`${__dirname}/../../assets/cart.json`);
-
-router.get('/', async (_, res) => {
-    try {
-        const carts = await manager.getCarts();
-        res.status(200).json(carts);
-    } catch {
-        res.status(500).json({ error: 'No se pudo conectar con los carritos' });
-    }
-});
-
-router.post('/', async (_, res) => {
-    try {
-        const cart = await manager.addCart();
-        res.status(200).json({ message: 'Carrito creado con exito', cart });
-    } catch {
-        res.status(500).json({ error: 'No se pudo crear el carrito' });
-
-    }
-});
-
+// Endpoint para obtener los detalles de un carrito
 router.get('/:cid', async (req, res) => {
     try {
-        const cartId = parseInt(req.params.cid);
-        const cart = await manager.getCartById(cartId)
-        res.status(200).json(cart);
-    } catch {
-        res.status(500).json({ error: 'Hubo un problema al conectar con el servidor' });
+        const cartId = req.params.cid;
+        const cart = await Cart.findById(cartId).populate('products.productId');
+        res.json(cart);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
 
-router.post('/:cid/product/:pid', async (req, res) => {
+// Endpoint para eliminar un producto de un carrito
+router.delete('/:cid/products/:pid', async (req, res) => {
     try {
-        const cartId = parseInt(req.params.cid);
-        const productId = parseInt(req.params.pid);
-        const updatedCart = await manager.addProductToCart(productId, cartId);
-        res.status(200).json(updatedCart);
+        const cartId = req.params.cid;
+        const productId = req.params.pid;
+        // Implementa la lógica para eliminar el producto del carrito
+        res.status(200).json({ message: 'Producto eliminado del carrito' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Hubo un problema' });
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+// Endpoint para actualizar un carrito con un arreglo de productos
+router.put('/:cid', async (req, res) => {
+    try {
+        const cartId = req.params.cid;
+        const productsArray = req.body.products;
+        // Implementa la lógica para actualizar el carrito con el arreglo de productos
+        res.status(200).json({ message: 'Carrito actualizado' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+// Endpoint para actualizar la cantidad de ejemplares de un producto en un carrito
+router.put('/:cid/products/:pid', async (req, res) => {
+    try {
+        const cartId = req.params.cid;
+        const productId = req.params.pid;
+        const quantity = req.body.quantity;
+        // Implementa la lógica para actualizar la cantidad de ejemplares del producto en el carrito
+        res.status(200).json({ message: 'Cantidad de producto actualizada en el carrito' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+// Endpoint para eliminar todos los productos de un carrito
+router.delete('/:cid', async (req, res) => {
+    try {
+        const cartId = req.params.cid;
+        // Implementa la lógica para eliminar todos los productos del carrito
+        res.status(200).json({ message: 'Productos eliminados del carrito' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
 

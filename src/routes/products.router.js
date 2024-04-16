@@ -1,69 +1,46 @@
-const ProductManager = require('../ProductManager');
-const { Router } = require('express');
-const router = Router();
-
-const manager = new ProductManager(`${__dirname}/../../assets/products.json`);
-
 router.get('/', async (req, res) => {
     try {
+        const { limit = 10, page = 1, query, sort } = req.query;
         const products = await manager.getProducts();
-        const limitFilter = req.query.limit;
 
-        if (limitFilter) {
-            if (limitFilter <= 0 || isNaN(parseInt(limitFilter))) {
-                res.status(400).json({ error: 'Debe ingresar un número válido superior a 0.' });
-                return;
-            } else {
-                const limit = parseInt(limitFilter);
-                const limitedProducts = products.slice(0, limit);
-                res.json(limitedProducts);
-            }
-        } else {
-            res.json(products);
+        //  filtros y orden
+        let filteredProducts = products;
+        if (query) {
+            //  por categoría o disponibilidad             
         }
-    } catch {
-        res.status(500).json({ Error: 'Error al cargar los productos' });
-    };
-});
+        if (sort) {
+            // Ordenar ascendente o descendente por precio
+            //  de ordenamiento aquí
+        }
 
-router.get('/:pid', async (req, res) => {
-    try {
-        const productId = parseInt(req.params.pid);
-        const product = await manager.getProductById(productId);
-        res.status(200).json(product);
-    } catch {
-        res.status(500).json({ Error: 'Error al cargar los productos' });
-    }
-});
+        
+        const totalPages = Math.ceil(filteredProducts.length / limit);
+        const prevPage = Math.max(page - 1, 1);
+        const nextPage = Math.min(page + 1, totalPages);
+        const hasPrevPage = page > 1;
+        const hasNextPage = page < totalPages;
+        const prevLink = hasPrevPage ? `/api/products?limit=${limit}&page=${prevPage}` : null;
+        const nextLink = hasNextPage ? `/api/products?limit=${limit}&page=${nextPage}` : null;
 
-router.post('/', async (req, res) => {
-    try {
-        const { title, description, price, thumbnail, code, status, stock } = req.body;
-        await manager.addProduct(title, description, price, thumbnail, code, status, stock);
-        res.status(201).json({ message: 'Producto agregado correctamente' });
+        // Obtener los productos de la página actual
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const currentProducts = filteredProducts.slice(startIndex, endIndex);
+
+        res.json({
+            status: 'success',
+            products: currentProducts,
+            totalPages,
+            prevPage,
+            nextPage,
+            page,
+            hasPrevPage,
+            hasNextPage,
+            prevLink,
+            nextLink
+        });
     } catch (error) {
-        res.status(500).json({ error: 'Error al agregar el producto' });
+        console.error(error);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
-
-router.put('/:pid', async (req, res) => {
-    try {
-        const productId = parseInt(req.params.pid);
-        await manager.updateProduct(productId, req.body);
-        res.status(200).json({ message: 'Producto actualizado' });
-    } catch {
-        res.status(500).json({ error: 'Error al actualizar el producto' });
-    }
-});
-
-router.delete('/:pid', async (req, res) => {
-    try {
-        const productId = parseInt(req.params.pid);
-        await manager.deleteProduct(productId);
-        res.status(200).json({ message: 'Producto eliminado' });
-    } catch {
-        res.status(500).json({ error: 'Error al eliminar el producto' });
-    }
-});
-
-module.exports = router;
