@@ -1,29 +1,35 @@
 const express = require('express');
-const handlebars = require('express-handlebars');
-const { Server } = require('socket.io');
+const session = require('express-session');
+const path = require('path');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
-const user = require('.src/models/user'); // Importar el modelo de usuario correctamente
+const User = require('./dao/user');
 const homeRouter = require('./routes/home.router');
 const realTimeProductsRouter = require('./routes/realTimeProducts.router');
+const handlebars = require('express-handlebars');
+const { Server } = require('ws'); // Agregar esta línea para importar Server de ws
 
 const app = express();
 
-// Configuración de handlebars
+// Configuración de Handlebars
 app.engine('handlebars', handlebars.engine());
-app.set('views', `${__dirname}/views`);
+app.set('views', path.join(__dirname, 'views')); // Utiliza path.join para evitar problemas de ruta
 app.set('view engine', 'handlebars');
 
-app.use(express.static(`${__dirname}/../public`));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+// Middleware para las sesiones
+app.use(session({
+    secret: 'tu_secreto',
+    resave: false,
+    saveUninitialized: false
+}));
 
 // Configuración de Passport.js
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
+// Estrategia de autenticación local con Passport.js
+passport.use(new LocalStrategy({  usernameField: 'email' }, (email, password, done) => {
     User.findOne({ email: email }, (err, user) => {
         if (err) { return done(err); }
         if (!user) {
@@ -40,6 +46,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, don
     });
 }));
 
+// Serialización y deserialización de usuario con Passport.js
 passport.serializeUser((user, done) => {
     done(null, user.id);
 });
@@ -88,11 +95,14 @@ app.get('/register', (req, res) => {
 app.use('/api/home', homeRouter);
 app.use('/api/realTimeProducts', realTimeProductsRouter);
 
-const httpServer = app.listen(8080, () => {
-    console.log('Servidor listo!');
+// Iniciar servidor HTTP
+const PORT = process.env.PORT || 8080;
+const server = app.listen(PORT, () => {
+    console.log(`Servidor en ejecución en http://localhost:${PORT}`);
 });
 
-const wsServer = new Server(httpServer);
+// Iniciar servidor WebSocket
+const wsServer = new Server({ server }); // Pasar el servidor HTTP como argumento
 app.set('ws', wsServer);
 
 wsServer.on('connection', (socket) => {
