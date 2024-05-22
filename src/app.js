@@ -1,120 +1,53 @@
 const express = require('express');
-const session = require('express-session');
-const path = require('path');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt');
-const User = require('./dao/user');
-const homeRouter = require('./routes/home.router');
-const realTimeProductsRouter = require('./routes/realTimeProducts.router');
 const handlebars = require('express-handlebars');
-const { Server } = require('ws'); // Agregar esta línea para importar Server de ws
+const mongoose = require('mongoose');
+const passport = require('passport');
+const cookieParser = require('cookie-parser');
+
+// ROUTERS
+const { productsRouter, productsViewsRouter, cartRouter, cartViewsRouter, createProductRouter, sessionRouter, sessionViewsRouter } = require('./routes');
 
 const app = express();
 
-// Configuración de Handlebars
+// Configuración de handlebars
 app.engine('handlebars', handlebars.engine());
-app.set('views', path.join(__dirname, 'views')); // Utiliza path.join para evitar problemas de ruta
+app.set('views', `${__dirname}/views`);
 app.set('view engine', 'handlebars');
 
-// Middleware para las sesiones
-app.use(session({
-    secret: 'tu_secreto',
-    resave: false,
-    saveUninitialized: false
-}));
+// Permitir envío de información mediante formularios y JSON
+app.use(express.urlencoded({ extended: true })); // Middleware para parsear datos de formularios
+app.use(express.json()); // Middleware para parsear datos JSON
+app.use(express.static(`${__dirname}/../public`));
 
-// Configuración de Passport.js
+const initializeStrategy = require('./config/passport.config');
+const { dbName, mongoUrl } = require('./dbconfig');
+const sessionMiddleware = require('./session/mongoStorage');
+
+app.use(sessionMiddleware);
+initializeStrategy();
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cookieParser());
 
-// Estrategia de autenticación local con Passport.js
-passport.use(new LocalStrategy({  usernameField: 'email' }, (email, password, done) => {
-    User.findOne({ email: email }, (err, user) => {
-        if (err) { return done(err); }
-        if (!user) {
-            return done(null, false, { message: 'Usuario no encontrado.' });
-        }
-        bcrypt.compare(password, user.password, (err, isMatch) => {
-            if (err) { return done(err); }
-            if (isMatch) {
-                return done(null, user);
-            } else {
-                return done(null, false, { message: 'Contraseña incorrecta.' });
-            }
+// ENDPOINTS
+app.use('/api/products', productsRouter);
+app.use('/products', productsViewsRouter);
+app.use('/api/cart', cartRouter);
+app.use('/cart', cartViewsRouter);
+app.use('/createProduct', createProductRouter);
+app.use('/api/sessions', sessionRouter);
+app.use('/', sessionViewsRouter);
+
+// Se inicia el servidor en el puerto 8080
+const main = async () => {
+    try {
+        await mongoose.connect(mongoUrl, { dbName });
+        app.listen(8080, () => {
+            console.log('Servidor cargado!' + '\n' + 'http://localhost:8080');
         });
-    });
-}));
+    } catch (error) {
+        console.error('Error al conectar a la base de datos:', error);
+    }
+};
 
-// Serialización y deserialización de usuario con Passport.js
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-});
-
-passport.deserializeUser((id, done) => {
-    User.findById(id, (err, user) => {
-        done(err, user);
-    });
-});
-
-// Rutas de autenticación
-app.post('/login', passport.authenticate('local', {
-    successRedirect: '/dashboard',
-    failureRedirect: '/login',
-    failureFlash: true
-}));
-
-app.post('/register', (req, res) => {
-    bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
-        if (err) throw err;
-        const newUser = new User({
-            email: req.body.email,
-            password: hashedPassword
-        });
-        newUser.save((err) => {
-            if (err) {
-                console.error(err);
-                res.redirect('/register');
-            } else {
-                res.redirect('/login');
-            }
-        });
-    });
-});
-
-// Rutas de vistas
-app.get('/login', (req, res) => {
-    res.render('login');
-});
-
-app.get('/register', (req, res) => {
-    res.render('register');
-});
-
-// Rutas de la API
-app.use('/api/home', homeRouter);
-app.use('/api/realTimeProducts', realTimeProductsRouter);
-
-// Iniciar servidor HTTP
-const PORT = process.env.PORT || 8080;
-const server = app.listen(PORT, () => {
-    console.log(`Servidor en ejecución en http://localhost:${PORT}`);
-});
-
-// Iniciar servidor WebSocket
-const wsServer = new Server({ server }); // Pasar el servidor HTTP como argumento
-app.set('ws', wsServer);
-
-wsServer.on('connection', (socket) => {
-    console.log('Nuevo cliente conectado via WebSocket');
-});
-
-app.get('/api/products', (req, res) => {
-    const products = [
-        { id: 1, name: 'Producto 1', price: 10 },
-        { id: 2, name: 'Producto 2', price: 20 },
-        { id: 3, name: 'Producto 3', price: 30 },
-        // Agregar productos
-    ];
-    res.json(products);
-});
+main();

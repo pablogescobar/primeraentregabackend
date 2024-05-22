@@ -1,5 +1,5 @@
 <div class="form">
-    <form action="/api/realTimeProducts" id="productForm" method="post">
+    <form action="/products" id="productForm" method="post">
         <legend>Agregar Producto</legend>
 
         <div>
@@ -12,7 +12,7 @@
         </div>
         <div>
             <label>Precio: </label>
-            <input type="number" id="productPrice" name="price">
+            <input type="number" id="productPrice" name="price" min="1">
         </div>
         <div>
             <label>Imagen: </label>
@@ -31,23 +31,20 @@
         </div>
         <div>
             <label>Stock: </label>
-            <input type="number" id="productStock" name="stock">
+            <input type="number" id="productStock" name="stock" min="0">
+        </div>
+        <div>
+            <label>Categoria: </label>
+            <label>
+                <select name="category">
+                      <option value="">Todas las categorías</option>
+                    <option value="marca">Marca</option>
+                    <option value="modelo">Modelo</option>
+                    <option value="cuero">Cuero</option>
+                   
+                </select>
+            </label>
         </div>
         <input type="submit" id="addProduct" value="Agregar">
     </form>
-</div>
-
-<div class="container" id="productFeed">
-    {{#each products}}
-    <div class="product">
-        <h4>{{title}}</h4>
-        <img src="{{thumbnail}}" alt="imagen de {{title}}">
-        <div class="product__info">
-            <p>{{description}}</p>
-            <p>Precio: {{price}}</p>
-            <p>Stock: {{stock}}</p>
-            <p>Código: {{code}}</p>
-        </div>
-    </div>
-    {{/each}}
 </div>

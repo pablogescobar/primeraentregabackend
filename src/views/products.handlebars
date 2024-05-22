@@ -1,0 +1,61 @@
+<div class="container">
+    <h2>Productos</h2>
+    {{#if isLoggedIn}}
+    <h3>Hola {{firstName}} {{lastName}}</h3>
+    {{/if}}
+    <p class="margin">Página actual: {{products.page}}</p>
+    <ul>
+        {{#each products.payload}}
+        <li>
+            <div class="products">
+                <h4>{{this.title}}</h4>
+                {{#if isLoggedIn}}
+                <p>Precio: {{this.price}}</p>
+                {{/if}}
+                <p>Stock: {{this.stock}}</p>
+                <p>ID: {{this._id}}</p>
+                <a href="http://localhost:8080/products/{{this._id}}">Ver</a>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+
+    <div class="container">
+        {{#if products.hasPrevPage}}
+        <a href="{{products.prevLink}}">Anterior</a>
+        {{/if}}
+
+        {{#if products.hasNextPage}}
+        <a href="{{products.nextLink}}">Siguiente</a>
+        {{/if}}
+    </div>
+
+    <form id="urlFilter" class="filter">
+        <label>
+            Ordenar por:
+            <select name="sort">
+                <option value="">Sin Orden</option>
+                <option value="asc">Menor Precio</option>
+                <option value="desc">Mayor Precio</option>
+            </select>
+        </label>
+        <label>
+            Categoría:
+            <select name="category">
+                <option value="">Todas las categorías</option>
+                    <option value="marca">Marca</option>
+                    <option value="modelo">Modelo</option>
+                    <option value="cuero">Cuero</option>
+            </select>
+        </label>
+        <label>
+            Disponibilidad:
+            <input type="checkbox" name="availability" value="true"> Disponible
+        </label>
+        <label>
+            Productos por página:
+            <input type="number" max="20" min="1" name="limit" value="10">
+        </label>
+        <button type="submit">Buscar</button>
+    </form>
+</div>

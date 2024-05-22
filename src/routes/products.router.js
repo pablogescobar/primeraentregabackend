@@ -1,46 +1,24 @@
-router.get('/', async (req, res) => {
-    try {
-        const { limit = 10, page = 1, query, sort } = req.query;
-        const products = await manager.getProducts();
+const { Router } = require('express'); // Importa  Router de Express para definir las rutas
+const router = Router(); // Crea un enrutador
+const { Controller } = require('../controller/products.controller');
+const { verifyToken } = require('../utils/jwt');
 
-        //  filtros y orden
-        let filteredProducts = products;
-        if (query) {
-            //  por categoría o disponibilidad             
-        }
-        if (sort) {
-            // Ordenar ascendente o descendente por precio
-            //  de ordenamiento aquí
-        }
+//  obtener todos los produtos
+router.get('/', (req, res) => new Controller().getProducts(req, res));
 
-        
-        const totalPages = Math.ceil(filteredProducts.length / limit);
-        const prevPage = Math.max(page - 1, 1);
-        const nextPage = Math.min(page + 1, totalPages);
-        const hasPrevPage = page > 1;
-        const hasNextPage = page < totalPages;
-        const prevLink = hasPrevPage ? `/api/products?limit=${limit}&page=${prevPage}` : null;
-        const nextLink = hasNextPage ? `/api/products?limit=${limit}&page=${nextPage}` : null;
+//  obtener un producto por su ID
+router.get('/:pid', async (req, res) => new Controller().getProductsById(req, res));
 
-        // Obtener los productos de la página actual
-        const startIndex = (page - 1) * limit;
-        const endIndex = page * limit;
-        const currentProducts = filteredProducts.slice(startIndex, endIndex);
+//  agregar producto al carrito
+router.post('/:pid', verifyToken, async (req, res) => new Controller().addProductToCart(req, res));
 
-        res.json({
-            status: 'success',
-            products: currentProducts,
-            totalPages,
-            prevPage,
-            nextPage,
-            page,
-            hasPrevPage,
-            hasNextPage,
-            prevLink,
-            nextLink
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error interno del servidor' });
-    }
-});
+//  agregar un nuevo producto
+router.post('/', async (req, res) => new Controller().addProduct(req, res));
+
+// a actualizar un producto por su ID
+router.put('/:pid', async (req, res) => new Controller().updateProduct(req, res));
+
+//  eliminar un producto por su ID
+router.delete('/:pid', async (req, res) => new Controller().deleteProduct(req, res));
+
+module.exports = router; //  enrutador
