@@ -7,7 +7,8 @@ module.exports = session({
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-        mongoUrl: `${mongoUrl}/${dbName}`,  // Usa la URL completa con el nombre de la base de datos
+        mongoUrl, // Utiliza directamente mongoUrl desde el archivo de configuración
+        dbName,
         collectionName: 'sessions',
         ttl: 14 * 24 * 60 * 60 // 14 días
     }),

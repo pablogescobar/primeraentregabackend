@@ -1,5 +1,7 @@
-require('dotenv').config(); // Carga las variables de entorno desde .env
+// src/dbconfig.js
+require('dotenv').config();
+
 module.exports = {
-    dbName: process.env.MONGO_DBNAME,
+    dbName: process.env.DB_NAME,
     mongoUrl: process.env.MONGO_URL
-}
+};

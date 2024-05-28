@@ -1,8 +1,12 @@
+// src/app.js
 const express = require('express');
 const handlebars = require('express-handlebars');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
+const dotenv = require('dotenv'); // Importar dotenv
+
+dotenv.config(); // Cargar las variables de entorno
 
 // ROUTERS
 const { productsRouter, productsViewsRouter, cartRouter, cartViewsRouter, createProductRouter, sessionRouter, sessionViewsRouter } = require('./routes');
