@@ -1,6 +1,5 @@
 const passport = require('passport');
-const initializeStrategies = require('./strategies'); // Importa desde './strategies'
-
+const initializeStrategies = require('./strategies');
 const { UserRepository } = require('../repository/user.repository');
 
 const initializeStrategy = () => {

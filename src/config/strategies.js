@@ -1,10 +1,12 @@
 const passport = require('passport');
-const OAuth2Strategy = require('passport-oauth2').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
 const GitHubStrategy = require('passport-github').Strategy;
 const { generateToken } = require('../middlewares/jwt.middleware');
 const { ExtractJwt } = require('passport-jwt');
 const { UserRepository } = require('../repository/user.repository');
-const LocalStrategy = require('passport-local').Strategy;
+const JwtStrategy = require('passport-jwt').Strategy;
+
+
 
 module.exports = () => {
     passport.use(new LocalStrategy(
@@ -34,15 +36,7 @@ module.exports = () => {
         }
     }));
 
-    passport.use(new OAuth2Strategy({
-        clientID: process.env.OAUTH2_CLIENT_ID,
-        clientSecret: process.env.OAUTH2_CLIENT_SECRET,
-        callbackURL: "http://localhost:8080/auth/oauth2/callback",
-        authorizationURL: "http://example.com/oauth2/authorize" // Reemplaza con la URL real de autorización
-    },
-    async (accessToken, refreshToken, profile, done) => {
-        // Lógica de verificación de la estrategia OAuth2
-    }));
+    // No necesitas la estrategia OAuth2, así que no la incluyas aquí
 
     passport.use(new JwtStrategy({
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
