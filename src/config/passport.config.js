@@ -1,33 +1,24 @@
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const User = require('../models/User');
+const initializeStrategies = require('./strategies'); // Importa desde './strategies'
 
-passport.use(new LocalStrategy(
-  function(username, password, done) {
-    User.findOne({ username: username }, function (err, user) {
-      if (err) { return done(err); }
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
-      }
-      // Aquí deberías agregar una lógica para validar la contraseña
-      if (!user.validPassword(password)) {
-        return done(null, false, { message: 'Incorrect password.' });
-      }
-      return done(null, user);
+const { UserRepository } = require('../repository/user.repository');
+
+const initializeStrategy = () => {
+    initializeStrategies();  // Inicializar las estrategias
+
+    passport.serializeUser((user, done) => {
+        done(null, user._id);
     });
-  }
-));
 
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-  User.findById(id, function (err, user) {
-    done(err, user);
-  });
-});
-
-module.exports = () => {
-  // Inicializar estrategias si es necesario
+    passport.deserializeUser(async (id, done) => {
+        const userRepo = new UserRepository();
+        try {
+            const user = await userRepo.getUserById(id);
+            done(null, user);
+        } catch (error) {
+            done(error, null);
+        }
+    });
 };
+
+module.exports = initializeStrategy;
