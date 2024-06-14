@@ -1,3 +1,4 @@
+// src/config/strategies.js
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const GitHubStrategy = require('passport-github').Strategy;
@@ -5,8 +6,7 @@ const { generateToken } = require('../middlewares/jwt.middleware');
 const { ExtractJwt } = require('passport-jwt');
 const { UserRepository } = require('../repository/user.repository');
 const JwtStrategy = require('passport-jwt').Strategy;
-
-
+const logger = require('../utils/logger'); // Importa el logger
 
 module.exports = () => {
     passport.use(new LocalStrategy(
@@ -16,6 +16,7 @@ module.exports = () => {
                 const user = await userRepo.loginUser(username, password);
                 return done(null, user);
             } catch (error) {
+                logger.error('Error en LocalStrategy:', error);
                 return done(null, false, { message: error.message });
             }
         }
@@ -32,16 +33,15 @@ module.exports = () => {
             const { user } = await userRepo.githubLogin(profile);
             return done(null, user);
         } catch (error) {
+            logger.error('Error en GitHubStrategy:', error);
             return done(error, false);
         }
     }));
 
-    // No necesitas la estrategia OAuth2, así que no la incluyas aquí
-
     passport.use(new JwtStrategy({
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         secretOrKey: process.env.JWT_SECRET
-    }, 
+    },
     async (jwtPayload, done) => {
         const userRepo = new UserRepository();
         try {
@@ -52,6 +52,7 @@ module.exports = () => {
                 return done(null, false);
             }
         } catch (error) {
+            logger.error('Error en JwtStrategy:', error);
             return done(error, false);
         }
     }));

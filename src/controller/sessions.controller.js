@@ -1,9 +1,10 @@
-require('dotenv').config(); // Carga las variables de entorno desde .env
+require('dotenv').config();
 const { Router } = require('express');
 const router = Router();
 const { generateToken } = require('../utils/jwt');
 const cookieParser = require('cookie-parser');
 const daoUsers = require('../dao/mongo/daoUsers');
+const logger = require('../utils/logger'); // Importa el logger
 
 router.use(cookieParser());
 
@@ -14,6 +15,7 @@ class Controller {
         try {
             res.redirect('/');
         } catch (e) {
+            logger.error('Error en redirect:', e);
             res.status(500).json({ error: e.message });
         }
     }
@@ -22,6 +24,7 @@ class Controller {
         try {
             res.send('Hubo un error al identificar sus credenciales.');
         } catch (e) {
+            logger.error('Error en logError:', e);
             res.status(500).json({ error: e.message });
         }
     }
@@ -44,8 +47,10 @@ class Controller {
             }
             const accessToken = generateToken(user);
             res.cookie('accessToken', accessToken, { maxAge: 60 * 5 * 1000, httpOnly: true });
+            logger.info(`Usuario logueado: ${user.email}`);
             res.redirect('/');
         } catch (e) {
+            logger.error('Error en login:', e);
             res.status(500).json({ error: e.message });
         }
     }
@@ -62,25 +67,27 @@ class Controller {
             }
             res.json(user);
         } catch (e) {
+            logger.error('Error en current:', e);
             res.status(500).json({ error: e.message });
         }
     }
 
     githubCb(req, res) {
         try {
-            // Envía el token JWT al cliente
             res.cookie('accessToken', req.user.accessToken, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
             res.redirect('/');
         } catch (err) {
+            logger.error('Error en githubCb:', err);
             res.status(500).json({ error: err.message });
         }
     }
 
     logout(res) {
         try {
-            res.clearCookie('accessToken'); // Elimina la cookie llamada 'accessToken'
+            res.clearCookie('accessToken');
             res.redirect('/');
         } catch (e) {
+            logger.error('Error en logout:', e);
             res.status(500).json({ error: e.message });
         }
     }
@@ -89,8 +96,10 @@ class Controller {
         try {
             const { email } = req.body;
             await new daoUsers().deleteUser(email);
+            logger.info(`Usuario eliminado: ${email}`);
             res.json({ message: 'Usuario eliminado correctamente.' });
         } catch (e) {
+            logger.error('Error en deleteUser:', e);
             res.status(500).json({ error: e.message });
         }
     }
