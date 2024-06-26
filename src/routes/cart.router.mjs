@@ -1,8 +1,8 @@
 const { Router } = require('express'); // Importa la clase Router de Express para definir las rutas
 const router = Router(); // Crea un enrutador
-const { Controller } = require('../controller/cart.controller');
-const { isUser } = require('../middlewares/auth.middleware');
-const { verifyToken } = require('../middlewares/jwt.middleware');
+const { Controller } = require('../controller/cart.controller.mjs');
+const { isUser } = require('../middlewares/auth.middleware.mjs');
+const { verifyToken } = require('../middlewares/jwt.middleware.mjs');
 
 // Ruta para obtener todos los carritos
 router.get('/', (req, res) => new Controller().getCarts(req, res));

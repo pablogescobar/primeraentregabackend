@@ -1,7 +1,7 @@
 const passport = require('passport');
 const { Strategy } = require('passport-github2');
-const { verifyToken } = require('../../middlewares/jwt.middleware');
-const { clientID, clientSecret, callbackURL } = require('../github.private');
+const { verifyToken } = require('../../middlewares/jwt.middleware.mjs');
+const { clientID, clientSecret, callbackURL } = require('../github.private.mjs');
 const { UserRepository } = require('../../repository/user.repository.mjs');
 
 const githubStrategy = () => {

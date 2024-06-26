@@ -1,6 +1,6 @@
 require('dotenv').config();
-const { CustomError } = require('../utils/errors/customErrors');
-const { ErrorCodes } = require('../utils/errors/errorCodes');
+const { CustomError } = require('./errors/customErrors.mjs');
+const { ErrorCodes } = require('./errors/errorCodes.mjs');
 const nodemailer = require('nodemailer');
 
 class MailingService {

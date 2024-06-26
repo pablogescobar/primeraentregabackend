@@ -1,7 +1,10 @@
+// user.repository.mjs
+
 import dotenv from 'dotenv';
 dotenv.config();
+
 import { DaoUsers } from '../dao/mongo/daoUsers.mjs';
-import CartDAO from '../dao/mongo/carts.dao.mjs'; // Asegúrate de que carts.dao.mjs también sea un módulo ES6
+import { DaoCarts } from '../dao/mongo/daoCarts.mjs'; // Importamos específicamente DaoCarts
 import { hashPassword, isValidPassword } from '../utils/hashing.mjs';
 import { generateToken, generatePasswordRecoveryToken } from '../middlewares/jwt.middleware.mjs';
 import { UserDTO } from '../dto/userToken.dto.mjs';
@@ -13,13 +16,13 @@ import { MailingService } from '../utils/mailingService.mjs';
 class UserRepository {
 
     #DaoUsers;
-    #cartDAO;
+    #DaoCarts;
     #adminUser;
     #superAdminUser;
 
     constructor() {
         this.#DaoUsers = new DaoUsers();
-        this.#cartDAO = new CartDAO();
+        this.#DaoCarts = new DaoCarts();
 
         this.#adminUser = {
             _id: 'admin',
@@ -33,9 +36,9 @@ class UserRepository {
 
         this.#superAdminUser = {
             _id: 'superAdmin',
-            firstName: 'Federico',
-            lastName: 'Di Iorio',
-            age: 28,
+            firstName: 'Pablo',
+            lastName: 'Garcia',
+            age: 54,
             email: process.env.SADMIN_USER,
             password: process.env.SADMIN_PASS,
             rol: 'superAdmin',
@@ -120,7 +123,7 @@ class UserRepository {
                 });
             }
 
-            const cart = await this.#cartDAO.addCart({ products: [] });
+            const cart = await this.#DaoCarts.addCart({ products: [] });
             const user = await this.#generateNewUser(firstName, lastName, age, email, password, cart);
 
             return await this.#DaoUsers.create(user);
@@ -166,7 +169,7 @@ class UserRepository {
         } catch (error) {
             throw CustomError.createError({
                 name: 'Error de logeo',
-                cause: 'Ocurrio validar sus credenciales. Intente nuevamente o cambie su contraseña',
+                cause: 'Ocurrió un error al validar sus credenciales. Intente nuevamente o cambie su contraseña',
                 message: 'Contraseña incorrecta',
                 code: ErrorCodes.USER_LOGIN_ERROR,
                 otherProblems: error
@@ -195,7 +198,7 @@ class UserRepository {
             });
         }
 
-        const passToken = (await new MailingService().sendMail(email));
+        const passToken = await new MailingService().sendMail(email);
 
         const handlerPassToken = generatePasswordRecoveryToken(passToken.randomNumber, passToken.email);
 
@@ -241,7 +244,7 @@ class UserRepository {
         if (confirmValidPassword) {
             throw CustomError.createError({
                 name: 'Contraseña inválida',
-                cause: 'La la nueva contraseña no puede ser igual a la contraseña anterior.',
+                cause: 'La nueva contraseña no puede ser igual a la contraseña anterior.',
                 message: 'Debe actualizar su contraseña',
                 code: ErrorCodes.PASSWORD_UPDATE_ERROR
             });
@@ -265,25 +268,27 @@ class UserRepository {
 
                 const newUser = await this.registerUser(firstName, lastName, age, profile._json.email, password);
                 const accessToken = this.#generateAccessToken(newUser);
+
                 const userPayload = new UserDTO(newUser);
 
-                return { accessToken, userPayload };
+                return { accessToken, userPayload
+                } else {
+                    const accessToken = this.#generateAccessToken(user);
+                    const userPayload = new UserDTO(user);
+    
+                    return { accessToken, userPayload };
+                }
+            } catch (error) {
+                throw CustomError.createError({
+                    name: 'Error de logeo con github',
+                    cause: 'Ocurrió un error al intentar logearse con GitHub',
+                    message: 'No se pudo iniciar sesión con GitHub',
+                    code: ErrorCodes.USER_LOGIN_ERROR,
+                    otherProblems: error
+                });
             }
-
-            const accessToken = this.#generateAccessToken(user);
-            const userPayload = new UserDTO(user);
-
-            return { accessToken, userPayload };
-        } catch (error) {
-            throw CustomError.createError({
-                name: 'Error de logeo con github',
-                cause: 'Ocurrió un error al intentar logearse con github',
-                message: 'No se pudo iniciar sesión con github',
-                code: ErrorCodes.USER_LOGIN_ERROR,
-                otherProblems: error
-            });
         }
     }
-}
-
-export { UserRepository };
+    
+    export { UserRepository };
+    

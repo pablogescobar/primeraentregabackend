@@ -1,4 +1,4 @@
-const daoCarts = require('../dao/mongo/daoCarts');
+const daoCarts = require('../dao/mongo/daoCarts.mjs');
 
 class Controller {
     constructor() { }

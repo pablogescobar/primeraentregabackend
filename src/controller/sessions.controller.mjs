@@ -1,10 +1,10 @@
 require('dotenv').config();
 const { Router } = require('express');
 const router = Router();
-const { generateToken } = require('../utils/jwt');
+const { generateToken } = require('../utils/jwt.mjs');
 const cookieParser = require('cookie-parser');
 const daoUsers = require('../dao/mongo/daoUsers.mjs');
-const logger = require('../utils/logger'); // Importa el logger
+const logger = require('../utils/logger.mjs'); // Importa el logger
 
 router.use(cookieParser());
 

@@ -1,4 +1,4 @@
-const { ErrorCodes } = require("../utils/errors/errorCodes");
+const { ErrorCodes } = require("../utils/errors/errorCodes.mjs");
 
 /**
  * @type {import("express").ErrorRequestHandler}

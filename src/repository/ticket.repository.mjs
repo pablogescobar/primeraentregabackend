@@ -1,7 +1,7 @@
 const TicketDAO = require('../dao/mongo/ticket.dao');
-const { CartRepository } = require('./carts.repository')
+const { CartRepository } = require('./carts.repository.mjs')
 const ProductDAO = require('../dao/mongo/products.dao');
-const { CustomError } = require('../utils/errors/customErrors');
+const { CustomError } = require('../utils/errors/customErrors.mjs');
 const { ErrorCodes } = require('../utils/errors/errorCodes');
 
 class TicketRepository {

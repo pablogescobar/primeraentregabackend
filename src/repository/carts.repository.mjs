@@ -1,6 +1,6 @@
 const CartDAO = require('../dao/mongo/carts.dao');
-const { ProductRepository } = require('./products.repository');
-const { CustomError } = require('../utils/errors/customErrors');
+const { ProductRepository } = require('./products.repository.mjs');
+const { CustomError } = require('../utils/errors/customErrors.mjs');
 const { ErrorCodes } = require('../utils/errors/errorCodes');
 
 class CartRepository {

@@ -1,7 +1,7 @@
 const ProductDAO = require('../dao/mongo/products.dao');
 const UserDAO = require('../dao/mongo/users.dao');
 const { ProductDTO } = require('../dto/product.dto');
-const { CustomError } = require('../utils/errors/customErrors');
+const { CustomError } = require('../utils/errors/customErrors.mjs');
 const { ErrorCodes } = require('../utils/errors/errorCodes');
 const { generateInvalidProductData } = require('../utils/errors/errors');
 

@@ -1,7 +1,7 @@
 const { Router } = require('express'); // Importa  Router de Express para definir las rutas
 const router = Router(); // Crea un enrutador
-const { Controller } = require('../controller/products.controller');
-const { verifyToken } = require('../utils/jwt');
+const { Controller } = require('../controller/products.controller.mjs');
+const { verifyToken } = require('../utils/jwt.mjs');
 
 //  obtener todos los produtos
 router.get('/', (req, res) => new Controller().getProducts(req, res));

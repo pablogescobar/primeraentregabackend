@@ -1,4 +1,4 @@
-const { logger } = require('../utils/logger');
+const { logger } = require('../utils/logger.mjs');
 
 module.exports = {
     useLogger: (req, res, next) => {

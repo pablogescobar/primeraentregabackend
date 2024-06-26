@@ -5,7 +5,7 @@
   "main": "src/app.mjs",
   "type": "module",
   "scripts": {
-    "start": "nodemon src/app.mjs",
+    "start": "nodemon --experimental-modules src/app.mjs",
     "test": "mocha --require esm --recursive tests/testDaoUsers.mjs"
   },
   "keywords": [],

@@ -1,5 +1,5 @@
 const daoProducts = require('../dao/mongo/daoProducts');
-const logger = require('../utils/logger'); // Importa el logger
+const logger = require('../utils/logger.mjs'); // Importa el logger
 
 class Controller {
     constructor() { }

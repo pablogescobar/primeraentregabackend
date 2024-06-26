@@ -1,8 +1,8 @@
 const { Router } = require('express');
-const { verifyToken } = require('../middlewares/jwt.middleware');
+const { verifyToken } = require('../middlewares/jwt.middleware.mjs');
 const router = Router();
-const { Controller } = require('../controller/addProductView.controller');
-const { isUserPremium } = require('../middlewares/auth.middleware');
+const { Controller } = require('../controller/addProductView.controller.mjs');
+const { isUserPremium } = require('../middlewares/auth.middleware.mjs');
 
 router.get('/', verifyToken, isUserPremium, (req, res) => new Controller().viewForm(req, res));
 

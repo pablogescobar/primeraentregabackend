@@ -2,7 +2,7 @@ require('dotenv').config(); // Carga las variables de entorno desde .env
 const { Router } = require('express'); // Importa la clase Router de Express para definir las rutas
 const router = Router(); //  enrutador
 const passport = require('passport');
-const { Controller } = require('../controller/sessions.controller');
+const { Controller } = require('../controller/sessions.controller.mjs');
 
 router.post('/register', passport.authenticate('register', { failureRedirect: '/api/sessions/failregister', session: false }), (_, res) => new Controller().redirect(res));
 
