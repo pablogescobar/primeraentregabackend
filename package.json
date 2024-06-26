@@ -2,9 +2,10 @@
   "name": "tu-proyecto",
   "version": "1.0.0",
   "description": "Descripción de tu proyecto",
-  "main": "src/app.js",
+  "main": "src/app.mjs",
+  "type": "module",
   "scripts": {
-    "start": "nodemon src/app.js",
+    "start": "nodemon src/app.mjs",
     "test": "mocha --require esm --recursive tests/testDaoUsers.mjs"
   },
   "keywords": [],
@@ -23,7 +24,7 @@
     "jsonwebtoken": "^9.0.2",
     "mocha": "^10.4.0",
     "mongodb": "^6.5.0",
-    "mongoose": "^8.4.1",
+    "mongoose": "^8.4.4",
     "mongoose-paginate-v2": "^1.8.1",
     "passport": "^0.7.0",
     "passport-github": "^1.1.0",

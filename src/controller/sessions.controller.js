@@ -3,7 +3,7 @@ const { Router } = require('express');
 const router = Router();
 const { generateToken } = require('../utils/jwt');
 const cookieParser = require('cookie-parser');
-const daoUsers = require('../dao/mongo/daoUsers');
+const daoUsers = require('../dao/mongo/daoUsers.mjs');
 const logger = require('../utils/logger'); // Importa el logger
 
 router.use(cookieParser());

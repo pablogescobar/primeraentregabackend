@@ -3,6 +3,10 @@
     padding: 0;
 }
 
+.margin {
+    margin: 1rem auto;
+}
+
 .form {
     margin: 2rem 0;
     display: flex;
@@ -22,7 +26,7 @@
 }
 
 .navBar {
-    background-color: #3bacc0;
+    background-color: #3b3bc0;
 }
 
 .navBar h1 {
@@ -37,91 +41,22 @@
     gap: 2rem;
 }
 
-
-
-.ul li:hover {
-    background-color: #121838;
-}
-
-.ul li a {
-    text-decoration: none;
-    color: #ffffff;
-}
-
-.container {
-    text-align: center;
-    margin: 2rem auto;
-    width: 80vw;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-}
-
-.product {
-    background-color: #afafaf;
-    padding: 1rem;
-    border: 1px solid gray;
-    border-radius: 3rem;
-}
-* {
-    margin: 0;
-    padding: 0;
-}
-
-.margin {
-    margin: 1rem auto;
-}
-
-.form {
-    margin: 2rem 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4rem;
-}
-
-.form form {
-    border: 1px solid rgb(219, 189, 20);
-    width: 20rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-}
-
-.navBar {
-    background-color: #77c03b;
-}
-
-.navBar h1 {
-    text-align: center;
-    padding: 3rem;
-}
-
-.ul {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-}
-
 .ul li {
     list-style-type: none;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 
 }
 
 .ul li a:hover {
-    background-color: #040c1d;
+    background-color: #353535;
 }
 
 .ul li a {
     transition: all .3s ease-in-out;
     text-decoration: none;
-    color: #200ec4;
+    color: #ffffff;
     text-decoration: none;
-    background-color: #e7370b;
+    background-color: #afafaf;
     padding: .75rem 1rem;
     border-radius: .5rem;
 }
@@ -129,4 +64,29 @@
 .container {
     margin: 2rem auto;
     width: 80vw;
+}
+
+.products {
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.products img {
+    width: 10rem;
+}
+
+.cart {
+    display: flex;
+    gap: 2rem;
+    margin: 1rem 0;
+}
+
+.cart .cart__id {
+    width: 15rem;
+}
+
+.filter {
+    display: flex;
+    gap: 1rem;
 }

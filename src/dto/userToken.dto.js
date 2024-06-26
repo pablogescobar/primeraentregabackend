@@ -6,7 +6,7 @@ class UserDTO {
         this.age = user.age;
         this.email = user.email;
         this.rol = user.rol;
-        this.cart = user.cart ? user.cart._id.toString() : null;
+        this.cart = user.cart ? user.cart._id.toString() : 'noCart';
     }
 }
 

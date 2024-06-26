@@ -1,26 +1,23 @@
-// src/config/passport.config.js
 const passport = require('passport');
-const initializeStrategies = require('./strategies');
-const { UserRepository } = require('../repository/user.repository');
-const logger = require('../utils/logger'); // Importa el logger
+const { UserRepository } = require('../repository/user.repository.mjs');
+const { localStrategy, githubStrategy, jwtStrategy } = require('./strategies');
 
 const initializeStrategy = () => {
-    initializeStrategies();
+
+    localStrategy();
+    githubStrategy();
+    jwtStrategy();
 
     passport.serializeUser((user, done) => {
+        console.log('Serailized: ', user);
         done(null, user._id);
-    });
+    })
 
     passport.deserializeUser(async (id, done) => {
-        const userRepo = new UserRepository();
-        try {
-            const user = await userRepo.getUserById(id);
-            done(null, user);
-        } catch (error) {
-            logger.error('Error en deserializeUser:', error);
-            done(error, null);
-        }
-    });
-};
+        console.log('Deserialized: ', id)
+        const user = await new UserRepository().getUserById(id);
+        done(null, user)
+    })
+}
 
 module.exports = initializeStrategy;
